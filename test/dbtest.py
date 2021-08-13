@@ -10,7 +10,7 @@ db_connection = mysql.connector.connect(
 db_cursor = db_connection.cursor(dictionary=True)
 
 def test_version():
-    db_cursor.execute("SELECT version FROM versionTable;")
+    db_cursor.execute("SELECT max(version) as version FROM versionTable;")
     resultVersion = db_cursor.fetchone()
     f = open('expecteddbstate/versionTable.json')
     version = json.load(f)

@@ -1,2 +1,2 @@
 FROM mysql:8
-COPY dbscripts/seed_data/seeddata.sql /docker-entrypoint-initdb.d
+COPY dbscripts/seed_data/seeddata.sql /docker-entrypoint-initdb.d/
