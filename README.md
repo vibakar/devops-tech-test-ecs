@@ -48,32 +48,70 @@ We will come back to you asap regarding next steps.
 
 We are looking forward to your submission.
 
-## Test Setup
+## Environment Setup
 
 ### Adding your solution
 
-Within `docker-compose.yml` there is a volume mount. Use this to mount your solution into the container by saving your script in the `submissionscript` directory.
+Add you submission to the `submissionsscript` directory.
+
+This will make the script available within the container due to a volume mount within `docker-compose.yml`
 
 ### Running the containers
 
-`$ docker compose up -d`
+To start the testing environment please run:
 
-This will create the two containers
+```sh
+docker-compose up -d
+```
 
-`exec_container`
+This will create two containers called:
 
-and
+- exec_container
+- mysql_container
 
-`mysql_container`
+Required language dependencies are installed in the `exec_container`, your solution should be invoked on the `exec_container`.
 
-Required Language dependencies are installed in the `exec_container`, your solution should be invoked on the `exec_container`.
+### Adding script dependencies
 
-There is a test provided which can be run using;
+Any other dependencies you require to complete the tech test should be added to the `entrypoint.sh` file in the root directory of the repository.
 
-`$ cd scripts`
+e.g. `pip3 install mysql-client`
 
-`$ pytest`
+This ensures they are automatically installed when the container is run. Once dependencies have been added to the file you must restart the environment for them to take effect.
 
-Any other dependencies you require to complete the Tech test should be added in the script in the root `entrypoint.sh`
+```sh
+docker compose restart -d
+```
 
 **do not delete** `sleep infinity` leave this as the last command in `entrypoint.sh`
+
+### Testing your script
+
+Once you're ready to test you script you can connect to the `exec_container`. Due to the volume mount mentioned in [adding your solution](#adding-your-solution) it will already be available within the `exec-container`.
+
+```sh
+docker exec -it exec_container /bin/bash
+```
+
+Run your script using
+
+```sh
+/submissionscript/<yourscript.lang> /scripts/ dev mysql_container devopstt 123456`
+```
+
+You can then run the automated test to check if successful
+
+``` sh
+pytest /scripts/db_test.py
+```
+
+## Database credentials
+
+The database credentials are set in `docker-compose.yml` and are as follows;
+
+```
+User: dev
+Password: 123456
+Database name: devopstt
+Database host: mysql_container
+```
